@@ -7,7 +7,7 @@ namespace ConsoleApp
 {
     public class DataLoader
     {
-        
+
         public IList<DataSourceObject> Load(string dataSource)
         {
             IList<DataSourceObject> dataSourceObjects = new List<DataSourceObject>();
@@ -45,28 +45,43 @@ namespace ConsoleApp
         public IList<ImportedObject> Import(string fileToImport)
         {
             IList<ImportedObject> importedObjects = new List<ImportedObject>();
+
+            string errorLogFilePath = "somespace : )\\error_log.csv";
+
             using (var reader = new StreamReader(fileToImport))
+            using (var errorLogWriter = new StreamWriter(errorLogFilePath, append: true))
             {
                 string line;
+                int lineNumber = 0;
+
                 while ((line = reader.ReadLine()) != null)
                 {
-                    var values = line.Split(';');
-                    var importedObject = new ImportedObject
+                    lineNumber++;
+                    try
                     {
-                        Type = values[0],
-                        Name = values[1],
-                        Schema = values[2],
-                        ParentName = values[3],
-                        ParentType = values[4],
-                        ParentSchema = values[5],
-                        Title = values[6],
-                        Description = values[7],
-                        CustomField1 = values[8],
-                        CustomField2 = values[9],
-                        CustomField3 = values[10]
-                    };
+                        var values = line.Split(';');
 
-                    importedObjects.Add(importedObject);
+                        var importedObject = new ImportedObject
+                        {
+                            Type = values[0],
+                            Name = values[1],
+                            Schema = values[2],
+                            ParentName = values[3],
+                            ParentType = values[4],
+                            ParentSchema = values[5],
+                            Title = values[6],
+                            Description = values[7],
+                            CustomField1 = values[8],
+                            CustomField2 = values[9],
+                            CustomField3 = values[10]
+                        };
+
+                        importedObjects.Add(importedObject);
+                    }
+                    catch (Exception ex)
+                    {
+                        errorLogWriter.WriteLine($"{lineNumber};{line};{ex.Message}");
+                    }
                 }
             }
 
