@@ -8,13 +8,19 @@
 
     public class Parser
     {
+        private readonly DataLoader _dataLoader;
         private IList<ImportedObject> ImportedObjects;
         private IList<DataSourceObject> DataSource;
+        
+        public Parser(DataLoader dataLoader)
+        {
+            _dataLoader = dataLoader;
+        }
 
         public void Do(string fileToImport, string dataSource)
         {
-            Import(fileToImport);
-            Load(dataSource);
+            ImportedObjects = _dataLoader.Import(fileToImport);
+            DataSource = _dataLoader.Load(dataSource);
             MatchAndUpdate();
             Print();
         }
@@ -118,83 +124,6 @@
                 match.CustomField1 = importedObject.CustomField1;
                 match.CustomField2 = importedObject.CustomField2;
                 match.CustomField3 = importedObject.CustomField3;
-            }
-        }
-
-        private void Load(string dataSource)
-        {
-            this.DataSource = new List<DataSourceObject>();
-
-            var parser = new TextFieldParser(dataSource);
-            parser.SetDelimiters(new string[] { ";" });
-            parser.ReadLine();
-
-            while (!parser.EndOfData)
-            {
-                string[] values = parser.ReadFields();
-                var dataSourceObject = new DataSourceObject
-                {
-                    Id = Convert.ToInt32(values[0]),
-                    Type = values[1],
-                    Name = values[2],
-                    Schema = values[3],
-                    ParentId = !string.IsNullOrEmpty(values[4]) ? Convert.ToInt32(values[4]) : 1,
-                    ParentType = values[5],
-                    Title = values[6],
-                    Description = values[7],
-                    CustomField1 = values[8],
-                    CustomField2 = values[9],
-                    CustomField3 = values[10]
-                };
-
-                this.DataSource.Add(dataSourceObject);
-            }
-        }
-
-        internal void Import(string fileToImport)
-        {
-            this.ImportedObjects = new List<ImportedObject>();
-
-            var streamReader = new StreamReader(fileToImport);
-
-            var importedLines = new List<string>();
-
-            while (!streamReader.EndOfStream)
-            {
-                var line = streamReader.ReadLine();
-                importedLines.Add(line);
-            }
-
-            for (int i = 0; i < importedLines.Count; i++)
-            {
-                var importedLine = importedLines[i];
-                var values = importedLine.Split(';');
-                var importedObject = new ImportedObject
-                {
-                    Type = values[0],
-                    Name = values[1],
-                    Schema = values[2],
-                    ParentName = values[3],
-                    ParentType = values[4],
-                    ParentSchema = values[5],
-                    Title = values[6],
-                    Description = values[7],
-                    CustomField1 = values[8],
-                    CustomField2 = values[9],
-                    CustomField3 = values[10]
-                };
-
-                this.ImportedObjects.Add(importedObject);
-            }
-
-            foreach (var importedObject in this.ImportedObjects)
-            {
-                importedObject.Type = importedObject.Type.Clear().ToUpper();
-                importedObject.Name = importedObject.Name.Clear();
-                importedObject.Schema = importedObject.Schema.Clear();
-                importedObject.ParentName = importedObject.ParentName.Clear();
-                importedObject.ParentType = importedObject.ParentType.Clear();
-                importedObject.ParentSchema = importedObject.ParentSchema.Clear();
             }
         }
     }

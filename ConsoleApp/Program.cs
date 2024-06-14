@@ -4,10 +4,11 @@
     {
         private static void Main()
         {
-            var reader = new Parser();
-            //reader.Do("sampleFile1.csv", "dataSource.csv");
-            //reader.Do("sampleFile2.csv", "dataSource.csv");
-            reader.Do("sampleFile3.csv", "dataSource.csv");
+            DataLoader dataLoader = new DataLoader();
+            var parser = new Parser(dataLoader);
+            parser.Do("sampleFile1.csv", "dataSource.csv");
+            //parser.Do("sampleFile2.csv", "dataSource.csv");
+            //parser.Do("sampleFile3.csv", "dataSource.csv");
         }
     }
 }
