@@ -62,6 +62,11 @@ namespace ConsoleApp
                     {
                         var values = line.Split(';');
 
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            values[i] = values[i].Clear();
+                        }
+
                         var importedObject = new ImportedObject
                         {
                             Type = values[0],

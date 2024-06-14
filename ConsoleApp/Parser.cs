@@ -28,7 +28,7 @@
             ImportedObjects = await _dataLoader.ImportAsync(fileToImport);
             DataSource = await _dataLoader.LoadAsync(dataSource);
             await _dataMatcher.MatchAndUpdateAsync(ImportedObjects, DataSource);
-            await _dataPrinter.PrintAsync(DataSource);
+            _dataPrinter.Print(DataSource);
         }
     }
 }
