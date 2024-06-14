@@ -52,7 +52,6 @@
   <ItemGroup>
     <Compile Include="DataLoader.cs" />
     <Compile Include="DataMatcher.cs" />
-    <Compile Include="DataParser.cs" />
     <Compile Include="DataPrinter.cs" />
     <Compile Include="DataSourceObject.cs" />
     <Compile Include="Extensions.cs" />
