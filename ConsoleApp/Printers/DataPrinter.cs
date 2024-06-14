@@ -8,28 +8,17 @@
     {
         public void Print(IList<DataSourceObject> dataSource)
         {
-            //var uniqueDataSourceObjects = dataSource.GroupBy(x => x.Type).Select(g => g.First()).OrderBy(x => x.Type).ToList();
+            var typesToPrint = new HashSet<string> { "AREA", "TERM", "DATABASE", "GLOSSARY", "DOMAIN" };
 
-            foreach (var dataSourceObject in dataSource.OrderBy(x => x.Type))
+            foreach (var dataSourceObject in dataSource.Where(x => typesToPrint.Contains(x.Type)).OrderBy(x => x.Type))
             {
-                switch (dataSourceObject.Type)
-                {
-                    case "AREA":
-                    case "TERM":
-                    case "DATABASE":
-                    case "GLOSSARY":
-                    case "DOMAIN":
-                        PrintDataSourceObject(dataSourceObject);
-
-                        // Direct children of database like tables, procedures, lookups
-                        PrintChildren(dataSource, dataSourceObject);
-
-                        break;
-                }
+                PrintDataSourceObject(dataSourceObject);
+                PrintChildren(dataSource, dataSourceObject);
             }
 
             Console.ReadKey();
         }
+
 
         private void PrintDataSourceObject(DataSourceObject dataSourceObject, int indentLevel = 0) // 0 as default of \t
         {
