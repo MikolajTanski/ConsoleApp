@@ -62,16 +62,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="dataSource.csv">
+    <Content Include="Data\dataSource.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sampleFile1.csv">
+    <Content Include="Data\sampleFile1.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sampleFile2.csv">
+    <Content Include="Data\sampleFile2.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sampleFile3.csv">
+    <Content Include="Data\sampleFile3.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
