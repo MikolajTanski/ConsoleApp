@@ -50,18 +50,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataLoader.cs" />
-    <Compile Include="DataMatcher.cs" />
-    <Compile Include="DataPrinter.cs" />
-    <Compile Include="DataSourceObject.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="ImportedObject.cs" />
+    <Compile Include="Loaders\DataLoader.cs" />
+    <Compile Include="Matchers\DataMatcher.cs" />
+    <Compile Include="Printers\DataPrinter.cs" />
+    <Compile Include="Objects\DataSourceObject.cs" />
+    <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Objects\ImportedObject.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Config\App.config" />
     <Content Include="Data\dataSource.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -74,7 +74,7 @@
     <Content Include="Data\sampleFile3.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="packages.config" />
+    <None Include="Config\packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
