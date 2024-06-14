@@ -46,7 +46,7 @@ namespace ConsoleApp
         {
             IList<ImportedObject> importedObjects = new List<ImportedObject>();
 
-            string errorLogFilePath = "somespace : )\\error_log.csv";
+            string errorLogFilePath = "Data\\error_log.csv";
 
             using (var reader = new StreamReader(fileToImport))
             using (var errorLogWriter = new StreamWriter(errorLogFilePath, append: true))
