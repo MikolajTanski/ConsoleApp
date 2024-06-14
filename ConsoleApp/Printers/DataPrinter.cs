@@ -3,47 +3,49 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public class DataPrinter
     {
-        public void Print(IList<DataSourceObject> dataSource)
+        public async Task PrintAsync(IList<DataSourceObject> dataSource)
         {
             var typesToPrint = new HashSet<string> { "AREA", "TERM", "DATABASE", "GLOSSARY", "DOMAIN" };
 
             foreach (var dataSourceObject in dataSource.Where(x => typesToPrint.Contains(x.Type)).OrderBy(x => x.Type))
             {
-                PrintDataSourceObject(dataSourceObject);
-                PrintChildren(dataSource, dataSourceObject);
+                await PrintDataSourceObjectAsync(dataSourceObject);
+                await PrintChildrenAsync(dataSource, dataSourceObject);
             }
 
             Console.ReadKey();
         }
 
-
-        private void PrintDataSourceObject(DataSourceObject dataSourceObject, int indentLevel = 0) // 0 as default of \t
+        private async Task PrintDataSourceObjectAsync(DataSourceObject dataSourceObject, int indentLevel = 0)
         {
-            string indent = new string('\t', indentLevel);
-            string title = string.IsNullOrEmpty(dataSourceObject.Title) ? "No Title" : dataSourceObject.Title;
-            string description = string.IsNullOrEmpty(dataSourceObject.Description) ? "No Description" : dataSourceObject.Description;
-
-            if (indentLevel == 0)
+            await Task.Run(() =>
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-            }
+                string indent = new string('\t', indentLevel);
+                string title = string.IsNullOrEmpty(dataSourceObject.Title) ? "No Title" : dataSourceObject.Title;
+                string description = string.IsNullOrEmpty(dataSourceObject.Description) ? "No Description" : dataSourceObject.Description;
 
-            Console.WriteLine($"{indent}{dataSourceObject.Type} '{dataSourceObject.Name} ({title})'");
+                if (indentLevel == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                }
 
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine($"{indent}{description}");
-            Console.ResetColor();
+                Console.WriteLine($"{indent}{dataSourceObject.Type} '{dataSourceObject.Name} ({title})'");
+
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($"{indent}{description}");
+                Console.ResetColor();
+            });
         }
 
-
-        private void PrintChildren(IList<DataSourceObject> dataSource, DataSourceObject parentObject)
+        private async Task PrintChildrenAsync(IList<DataSourceObject> dataSource, DataSourceObject parentObject)
         {
             var childrenGroups = dataSource
                 .Where(x => x.ParentId == parentObject.Id && x.ParentType == parentObject.Type)
@@ -55,17 +57,18 @@
                 Console.WriteLine($"\t{childrenGroup.Key}S ({childrenGroup.Count()}):");
                 Console.ResetColor();
 
-                foreach (var child in childrenGroup.OrderBy(x => x.Name))
-                {
-                    PrintDataSourceObject(child, 2); // 2 tabs for children
-
-                    // Direct sub-children like columns, parameters, values
-                    PrintSubChildren(dataSource, child);
-                }
+                var tasks = childrenGroup.OrderBy(x => x.Name).Select(child => PrintChildAndSubChildrenAsync(dataSource, child));
+                await Task.WhenAll(tasks);
             }
         }
 
-        private void PrintSubChildren(IList<DataSourceObject> dataSource, DataSourceObject parentObject)
+        private async Task PrintChildAndSubChildrenAsync(IList<DataSourceObject> dataSource, DataSourceObject child)
+        {
+            await PrintDataSourceObjectAsync(child, 2); // 2 tabs for children
+            await PrintSubChildrenAsync(dataSource, child);
+        }
+
+        private async Task PrintSubChildrenAsync(IList<DataSourceObject> dataSource, DataSourceObject parentObject)
         {
             var subChildrenGroups = dataSource
                 .Where(x => x.ParentId == parentObject.Id && x.ParentType == parentObject.Type)
@@ -77,12 +80,9 @@
                 Console.WriteLine($"\t\t\t{subChildrenGroup.Key}S ({subChildrenGroup.Count()}):");
                 Console.ResetColor();
 
-                foreach (var subChild in subChildrenGroup.OrderBy(x => x.Name))
-                {
-                    PrintDataSourceObject(subChild, 4); // 4 tabs for sub-children
-                }
+                var tasks = subChildrenGroup.OrderBy(x => x.Name).Select(subChild => PrintDataSourceObjectAsync(subChild, 4)); // 4 tabs for sub-children
+                await Task.WhenAll(tasks);
             }
         }
-
     }
 }

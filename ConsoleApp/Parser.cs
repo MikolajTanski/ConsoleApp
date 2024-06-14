@@ -6,6 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     public class Parser
     {
@@ -22,12 +23,12 @@
             _dataMatcher = dataMatcher;
         }
 
-        public void Do(string fileToImport, string dataSource)
+        public async Task ProcessDataAsync(string fileToImport, string dataSource)
         {
-            ImportedObjects = _dataLoader.Import(fileToImport);
-            DataSource = _dataLoader.Load(dataSource);
-            _dataMatcher.MatchAndUpdate(ImportedObjects, DataSource);
-            _dataPrinter.Print(DataSource);
+            ImportedObjects = await _dataLoader.ImportAsync(fileToImport);
+            DataSource = await _dataLoader.LoadAsync(dataSource);
+            await _dataMatcher.MatchAndUpdateAsync(ImportedObjects, DataSource);
+            await _dataPrinter.PrintAsync(DataSource);
         }
     }
 }

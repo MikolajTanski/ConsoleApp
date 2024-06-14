@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 
 namespace ConsoleApp
 {
     public class DataLoader
     {
-
-        public IList<DataSourceObject> Load(string dataSource)
+        public async Task<IList<DataSourceObject>> LoadAsync(string dataSource)
         {
             IList<DataSourceObject> dataSourceObjects = new List<DataSourceObject>();
+
             using (var parser = new TextFieldParser(dataSource))
             {
                 parser.SetDelimiters(";");
-                parser.ReadLine(); 
+                parser.ReadLine();
 
                 while (!parser.EndOfData)
                 {
-                    var values = parser.ReadFields();
+                    var values = await Task.Run(() => parser.ReadFields());
                     var dataSourceObject = new DataSourceObject
                     {
                         Id = Convert.ToInt32(values[0]),
@@ -41,8 +43,7 @@ namespace ConsoleApp
             return dataSourceObjects;
         }
 
-       
-        public IList<ImportedObject> Import(string fileToImport)
+        public async Task<IList<ImportedObject>> ImportAsync(string fileToImport)
         {
             IList<ImportedObject> importedObjects = new List<ImportedObject>();
 
@@ -54,7 +55,7 @@ namespace ConsoleApp
                 string line;
                 int lineNumber = 0;
 
-                while ((line = reader.ReadLine()) != null)
+                while ((line = await reader.ReadLineAsync()) != null)
                 {
                     lineNumber++;
                     try
@@ -80,7 +81,7 @@ namespace ConsoleApp
                     }
                     catch (Exception ex)
                     {
-                        errorLogWriter.WriteLine($"{lineNumber};{line};{ex.Message}");
+                        await errorLogWriter.WriteLineAsync($"{lineNumber};{line};{ex.Message}");
                     }
                 }
             }
