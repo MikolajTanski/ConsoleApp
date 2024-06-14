@@ -8,7 +8,7 @@
     {
         public void Print(IList<DataSourceObject> dataSource)
         {
-            var uniqueDataSourceObjects = dataSource.GroupBy(x => x.Type).Select(g => g.First()).OrderBy(x => x.Type).ToList();
+            //var uniqueDataSourceObjects = dataSource.GroupBy(x => x.Type).Select(g => g.First()).OrderBy(x => x.Type).ToList();
 
             foreach (var dataSourceObject in dataSource.OrderBy(x => x.Type))
             {
