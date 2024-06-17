@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
+using ConsoleApp.Helpers;
 using Microsoft.VisualBasic.FileIO;
 
 namespace ConsoleApp
 {
     public class DataLoader
     {
+        private readonly LogHelper _logHelper;
+
+        public DataLoader(LogHelper logHelper)
+        {
+            _logHelper = logHelper;
+        }
+
         public async Task<IList<DataSourceObject>> LoadAsync(string dataSource)
         {
             IList<DataSourceObject> dataSourceObjects = new List<DataSourceObject>();
@@ -36,6 +44,7 @@ namespace ConsoleApp
                         CustomField3 = values[10]
                     };
 
+
                     dataSourceObjects.Add(dataSourceObject);
                 }
             }
@@ -47,10 +56,7 @@ namespace ConsoleApp
         {
             IList<ImportedObject> importedObjects = new List<ImportedObject>();
 
-            string errorLogFilePath = "Data\\error_log.csv";
-
             using (var reader = new StreamReader(fileToImport))
-            using (var errorLogWriter = new StreamWriter(errorLogFilePath, append: true))
             {
                 string line;
                 int lineNumber = 0;
@@ -62,14 +68,9 @@ namespace ConsoleApp
                     {
                         var values = line.Split(';');
 
-                        for (int i = 0; i < values.Length; i++)
-                        {
-                            values[i] = values[i].Clear();
-                        }
-
                         var importedObject = new ImportedObject
                         {
-                            Type = values[0],
+                            Type = values[0].ToUpper(),
                             Name = values[1],
                             Schema = values[2],
                             ParentName = values[3],
@@ -86,9 +87,11 @@ namespace ConsoleApp
                     }
                     catch (Exception ex)
                     {
-                        await errorLogWriter.WriteLineAsync($"{lineNumber};{line};{ex.Message}");
+                        _logHelper.LogError("Import data error: " + ex.Message, lineNumber, line);
                     }
                 }
+
+                _logHelper.WriteLogEntries();
             }
 
             return importedObjects;
