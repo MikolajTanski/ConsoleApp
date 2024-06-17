@@ -8,7 +8,7 @@
     {
         public void Print(IList<DataSourceObject> dataSource)
         {
-            var typesToPrint = new HashSet<string> { "AREA", "TERM", "DATABASE", "GLOSSARY", "DOMAIN" };
+            var typesToPrint = new HashSet<string> {"DATABASE", "GLOSSARY", "DOMAIN" };
 
             foreach (var dataSourceObject in dataSource.Where(x => typesToPrint.Contains(x.Type)).OrderBy(x => x.Type))
             {
@@ -22,8 +22,8 @@
         private void PrintDataSourceObject(DataSourceObject dataSourceObject, int indentLevel = 0)
         {
             string indent = new string('\t', indentLevel);
-            string title = string.IsNullOrEmpty(dataSourceObject.Title) ? "No Title" : dataSourceObject.Title;
-            string description = string.IsNullOrEmpty(dataSourceObject.Description) ? "No Description" : dataSourceObject.Description;
+            string title = string.IsNullOrEmpty(dataSourceObject.Title) ? "" : dataSourceObject.Title;
+            string description = string.IsNullOrEmpty(dataSourceObject.Description) ? "" : dataSourceObject.Description;
 
             if (indentLevel == 0)
             {
