@@ -7,7 +7,7 @@ internal class Program
 {
     private static async Task Main()
     {
-        string logFilePath = ":) patch";
+        string logFilePath = "Data\\log_data.csv";
         var logHelper = new LogHelper(logFilePath);
         var dataLoader = new DataLoader(logHelper);
         var dataPrinter = new DataPrinter();
