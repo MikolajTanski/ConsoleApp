@@ -1,1 +1,1 @@
-For Dataedo
+Dla Dataedo
