@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\LogHelper.cs" />
     <Compile Include="Loaders\DataLoader.cs" />
     <Compile Include="Matchers\DataMatcher.cs" />
     <Compile Include="Printers\DataPrinter.cs" />
