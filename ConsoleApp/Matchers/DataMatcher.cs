@@ -1,26 +1,37 @@
-﻿namespace ConsoleApp
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ConsoleApp.Helpers;
 
+namespace ConsoleApp
+{
     public class DataMatcher
     {
+        private readonly LogHelper _logHelper;
+
+        public DataMatcher(LogHelper logHelper)
+        {
+            _logHelper = logHelper;
+        }
+
         public async Task MatchAndUpdateAsync(IList<ImportedObject> importedObjects, IList<DataSourceObject> dataSource)
         {
             var tasks = importedObjects.Select(importedObject => UpdateMatchingObjectAsync(importedObject, dataSource));
             await Task.WhenAll(tasks);
+            _logHelper.WriteLogEntries();
         }
 
         private async Task UpdateMatchingObjectAsync(ImportedObject importedObject, IList<DataSourceObject> dataSource)
         {
             var match = await Task.Run(() => dataSource.FirstOrDefault(x =>
-                x.Type == importedObject.Type &&
-                x.Name == importedObject.Name &&
-                x.Schema == importedObject.Schema));
+                x.Type.ClearEquals(importedObject.Type) &&
+                x.Name.ClearEquals(importedObject.Name) &&
+                x.Schema.ClearEquals(importedObject.Schema)));
 
             if (match is null)
             {
+                _logHelper.LogError("No match found", null, $"{importedObject.Type},{importedObject.Name},{importedObject.Schema}");
                 return;
             }
 
@@ -28,6 +39,7 @@
             {
                 if (!await IsParentMatchAsync(importedObject, match, dataSource))
                 {
+                    _logHelper.LogError("Parent match failed", null, $"{importedObject.Type},{importedObject.Name},{importedObject.Schema}");
                     return;
                 }
             }
@@ -43,11 +55,11 @@
         {
             var parent = await Task.Run(() => dataSource.FirstOrDefault(x =>
                 x.Id == match.ParentId &&
-                x.Type == match.ParentType));
+                x.Type.ClearEquals(match.ParentType)));
 
-            return parent?.Name == importedObject.ParentName &&
-                   parent?.Schema == importedObject.ParentSchema &&
-                   parent?.Type == importedObject.ParentType;
+            return parent?.Name.ClearEquals(importedObject.ParentName) == true &&
+                   parent?.Schema.ClearEquals(importedObject.ParentSchema) == true &&
+                   parent?.Type.ClearEquals(importedObject.ParentType) == true;
         }
     }
 }
