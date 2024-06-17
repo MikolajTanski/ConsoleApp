@@ -1,1 +1,1 @@
-Dla Dataedo
+Cześć
