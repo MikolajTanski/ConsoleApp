@@ -22,8 +22,8 @@
         private void PrintDataSourceObject(DataSourceObject dataSourceObject, int indentLevel = 0)
         {
             string indent = new string('\t', indentLevel);
-            string title = string.IsNullOrEmpty(dataSourceObject.Title) ? "" : dataSourceObject.Title;
-            string description = string.IsNullOrEmpty(dataSourceObject.Description) ? "" : dataSourceObject.Description;
+            string title = !string.IsNullOrEmpty(dataSourceObject.Title) ? dataSourceObject.Title : "No title";
+            string description = !string.IsNullOrEmpty(dataSourceObject.Description) ? dataSourceObject.Description : "No Description";
 
             if (indentLevel == 0)
             {
